@@ -1,11 +1,23 @@
 const form = document.querySelector('.form')
 const inputDate = document.querySelector('#date');
+var message = ''
+const datesInMonth=[31,28,31,30,31,30,31,31,30,31,30,31];
 
 form.addEventListener('submit', (e) =>{
     e.preventDefault()
     const inputDateValue = inputDate.value;
     const dateArray = inputDateValue.split("-");
-    checkPalindrome(dateArray);
+
+    if(inputDateValue){
+        document.querySelector('.output').innerHTML = `<img src="2.gif" style="width: 90px;" />`
+        setTimeout(() =>{
+            checkPalindrome(dateArray);
+        }, 4000)
+    }else{
+        document.querySelector('.output').innerHTML = `<p class="result">Date field can not blank.</p>`
+    }
+    
+   
 })
 
 // check pailndrome
@@ -24,7 +36,12 @@ function checkPalindrome(e){
     console.log(setFlag)
 
     if(setFlag){
-        console.log(setFlag)
+        message = `<p class="result">Wow! Your birthdate in formate ${setFlag} is palindrome</p>`
+        document.querySelector('.output').innerHTML = message;
+    }else{
+        findRestDays(inputDate, inputMonth, inputYear)
+        message = `<p class="result"> Ohh! Sorry, your birth date is not palindrome. And next palindrome date is ? and missed it by ? days.`
+        document.querySelector('.output').innerHTML = message;
     }
     
 }
@@ -68,4 +85,88 @@ function isPailndrome(StringChecking){
     }
 
     return true
+}
+
+
+/// finding how many days missed and days
+
+
+function findRestDays(date, month, year){
+    // console.log(date, month, year)
+   let dateNo1 = Number(date);
+   let monthNo1 = Number(month);
+   let yearNo1 = Number(year);
+
+   let dateNo2 = Number(date);
+   let monthNo2 = Number(month);
+   let yearNo2 = Number(year);
+
+
+   for(i=0; i>0; i++){
+       // forword
+
+       dateNo1 = dateNo1 + 1;
+       if(dateNo1 > Number(datesInMonth[monthNo1 - 1])){
+           dateNo1 = 1
+           monthNo1 = monthNo1 + 1;
+           if(monthNo1 > 12){
+               monthNo1 = 1
+               yearNo1 = yearNo1 + 1;
+           }
+       }
+
+       let yearString = yearNo1.toString()
+       let monthString = monthNo1.toString()
+       let dateString = dateNo1.toString()
+
+    //    console.log(yearString, monthString, dateString)
+
+       if(dateString.length == 1){
+           dateString = "0" + dateString
+       }
+       if(monthString.length == 1){
+           monthString = "0" + monthString
+       }
+
+       /// now set flag date 
+
+       let setFlagDate = checkAllCombination(yearString, monthString, dateString)
+
+       if(setFlagDate){
+           return [`${setFlagDate}`, i]
+       }
+
+       //backword
+
+       if(yearNo2>1){
+           dateNo2 = dateNo2-1;
+           if(monthNo2 < 1){
+               monthNo2 = 12;
+               yearNo2 = yearNo2 -1;
+
+               if(yearNo2<1){
+                   break;
+               }
+
+               dateNo2 = datesInMonth[monthNo2-1]
+           }
+       } 
+       
+       let yearStrings = yearNo2.toString()
+       let monthStrings = monthNo2.toString()
+       let dateStrings = dateNo2.toString()
+
+       if(monthStrings.length ==1){
+           monthStrings = "0" + monthStrings;
+       }
+       if(dateStrings.length ==1){
+           dateStrings = "0" + dateStrings;    
+        }
+
+        let setFlagDates = checkAllCombination(yearStrings, monthStrings, dateStrings)
+
+        if(setFlagDates){
+            return [`${setFlagDate}`, i]
+        }
+   }
 }
